@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-image: url(./桌布.jpg);
+            background-repeat: no-repeat;
+            /* background-size: cover; */
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+
+        }
+
+        .card {
+            width: 120px;
+            height: 168px;
+            position: relative;
+            transform-style: preserve-3d;
+            margin: 10px;
+            transition: 1s;
+            /* float: left; */
+            display: inline-block;
+        }
+
+        .card-front {
+            width: 100%;
+            height: 100%;
+            background-image: url(./1A.png);
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: absolute;
+            backface-visibility: hidden;
+        }
+
+        .card-back {
+            width: 100%;
+            height: 100%;
+            background-image: url(./card_back.png);
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: absolute;
+            backface-visibility: hidden;
+            transform: rotateY(180deg);
+        }
+
+        .card-close {
+            transform: rotateY(180deg);
+        }
+
+        #game {
+            width: 750px;
+            height: 969px;
+            /* background-color: #aaa; */
+            margin: auto;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="game">
+
+    </div>
+    <script src="./jquery-3.6.4.min.js"></script>
+    <script>
+        for (let i = 0; i < 20; i++) {
+            $('#game').append(`
+            <div class="card card-close">
+                <div class="card-front"></div>
+                <div class="card-back"></div>
+             </div>`)
+        }
+
+        for (let i = 0; i < 20; i++) {
+            const num = i % 10 + 1
+            if (i <= 9) {
+                $('.card').eq(i).find('.card-front').css('background-image', `url(./${num}A.png)`)
+            }
+            else {
+                $('.card').eq(i).find('.card-front').css('background-image', `url(./${num}B.png`)
+            }
+            $('.card').eq(i).attr('data-card', num);
+
+
+            const target = Math.round(Math.random() * 19);
+            $('.card').eq(target).insertAfter($('.card').eq(i));
+        }
+
+        $('#game').on('click', '.card', function () {
+            if (
+                $('.card:not(.card-close)').length < 2 &&
+                $(this).hasClass('card-close') &&
+                !$(this).hasClass('card-ok')
+            ) {
+                $(this).removeClass('card-close')
+            }
+
+            if ($('.card:not(.card-close)').length === 2) {
+
+                if (
+                    $('.card:not(.card-close)').eq(0).attr(`data-card`) ===
+                    $('.card:not(.card-close)').eq(1).attr(`data-card`)
+                ) {
+                    $('.card:not(.card-close)').addClass('card-ok')
+                    $('.card:not(.card-close)').fadeTo(1000, 0)
+                }
+
+                setTimeout(function () {
+                    $('.card:not(.card-close)').addClass('card-close')
+                    if ($('.card-ok').length === $('.card').length) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '恭喜',
+                            text: '恭喜過關'
+                        })
+                    }
+
+                }, 1000)
+            }
+
+        });
+
+
+
+
+
+    </script>
+</body>
+
+</html>
